@@ -1,0 +1,423 @@
+---
+title: "Carrera Luz 2022"
+subtile: "Actividad 1- WIlson Balguera Cubillos"
+output: 
+  flexdashboard::flex_dashboard:
+    theme:
+      version: 4
+      bg: "#ffffff"
+      fg: "#00557f" 
+      primary: "#f5f5f5"
+      navbar-bg: "#3ADAC6"
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+      code_font:
+        google: 
+          # arguments to sass::font_google() 
+          family: JetBrains Mono
+          local: false
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(paqueteMET)  
+library(ggplot2)
+# Install thematic and un-comment for themed static plots (i.e., ggplot2)
+# thematic::thematic_rmd()
+```
+
+```{r}
+
+distance=10070
+bd=subset(CarreraLuz22)  
+subset_masculino=subset(CarreraLuz22,CarreraLuz22$sex=="Hombre")
+subset_femenino=subset(CarreraLuz22,CarreraLuz22$sex=="Mujer")
+```
+
+
+#  <b style= 'color:#aa0000' > Aspectos Generales</b>
+
+Column {data-width=50 }
+--------------------------------------------
+
+### Ganador {.value-box}
+
+```{r}
+valueBox(  value=round(min(bd$timerun/60),1),caption='Ganador tiempo', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+### Tiempo promedio {.value-box}
+```{r}
+valueBox(  value=round(mean(bd$timerun/60),1),caption='Promedio tiempo', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+
+### Atletas {.value-box}
+```{r}
+valueBox(  value=length(bd$id),caption='Cantidad de Participantes', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+
+### velocidad  {.value-box}
+```{r}
+valueBox(value =paste(round(distance/min(bd$timerun),2),"m/s"), # ud1$cierre, 
+         caption = "Máxima velocidad", 
+         icon = "fa-clock", 
+         color = "#aa0000")
+```
+
+
+### distancia  {.value-box}
+```{r}
+valueBox(value = paste(round(distance/1000,2),"Km"), #ud1$min, 
+         caption = "Distancia recorrida", 
+         icon = "fa-solod fa-person-walking-arrow-right", 
+         color = "#aa0000")
+```
+
+Column {data-width=700 .tabset}
+--------------------------------------------
+
+###  <b style= 'color:#aa0000' >La mejor Carrera 2022 </b>
+**Carrera Luz 2022** En esta carrera  con una distancia de 10km , se recibieron participantes desde los 15 año s en adelante , en ella participaron 
+```{r}
+paste("Atletas femeninos:",length(subset_femenino$timerun))
+paste("Atletas masculinos:",length(subset_masculino$timerun))
+
+
+```
+
+```{r, echo=FALSE, out.width="30%", fig.align = "left"}
+knitr::include_graphics("carreragrande.png")
+```
+
+
+
+
+###  <b style= 'color:#aa0000'> Edad Vs Tiempo</b>
+
+
+```{r}
+ggplot(bd, aes(x = edad, y = timerun/60,col=sex)) +
+  geom_point()+
+  labs(
+         y = "Tiempo", 
+         x = "Edad atleta", 
+         title = "Edad Vs Tiempo", 
+         caption = "Fuente: midwest") +
+    theme_light()
+
+```
+**Tiempo por categoria**
+```{r}
+dat=aggregate(bd$timerun/60, list(sexo=bd$sex, categoria =bd$categoria), FUN=mean) 
+names (dat)[3]='Promedio Tiempo'
+dat
+
+
+```
+
+
+### <b style= 'color:#aa0000' >Categoria Vs Tiempo </b>
+
+Si bien la categoria de Jovenes es mas rapida , los veteranos de Categoria "c" en conjunto son mas rapidos
+
+
+
+```{r}
+
+
+dat=aggregate(bd$timerun/60, list(categoria =bd$categoria), FUN=mean) 
+names (dat)[2]='Promedio Tiempo'
+dat
+
+
+
+```
+ 
+ ```{r}
+ 
+ 
+ ```
+ 
+ 
+ 
+```{r}
+
+
+ggplot(bd, aes(x = categoria, y = timerun/60)) +
+  geom_boxplot(outlier.colour="red",color="blue",fill="#485767")+
+  geom_point(aes(color='mediana tiempo',  x=categoria,y=median(timerun/60) ))
+  labs(
+         y = "Tiempo", 
+         x = "Edad atleta", 
+         title = "Categoria Vs Tiempo"
+         ) +
+    theme_light()
+```
+
+
+
+
+Column {data-width=400 }
+--------------------------------------------
+
+### Participacion general en Categorias
+
+```{r}
+ggplot(bd, aes(x = categoria, fill=sex)) +  geom_bar(position ="dodge") 
+
+```
+
+### *Promedio de Edad
+
+```{r}
+
+dat=aggregate(round(bd$edad,2), list(sexo=bd$sex, categorias =bd$categoria), FUN=mean) 
+names (dat)[3]='Promedio edad'
+dat
+
+
+```
+
+
+# <b style= 'color:#019ca1' > Competencia Femenina </b> {data-navmenu="Tipo Competencia"}
+
+Column  { data-width=100 }
+--------------------------------------------
+
+### Ganador {.value-box}
+
+```{r}
+valueBox(  value=round(min(subset_femenino$timerun/60),1),caption='Ganador tiempo', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+### Tiempo promedio {.value-box}
+```{r}
+valueBox(  value=round(mean(subset_femenino$timerun/60),1),caption='Promedio tiempo', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+
+### Atletas {.value-box}
+```{r}
+valueBox(  value=length(subset_femenino$id),caption='Cantidad de Participantes', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+
+### Porcentaje de mujeres {.value-box}
+```{r}
+valueBox(  value=paste(round((length(subset_femenino$id)/length(CarreraLuz22$id))*100,2),"%"),caption='%Mujeres', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+### velocidad  {.value-box}
+```{r}
+valueBox(value =paste(round(distance/min(subset_femenino$timerun),2),"m/s"), # ud1$cierre, 
+         caption = "Máxima velocidad", 
+         icon = "fa-clock", 
+         color = "#aa0000")
+```
+
+
+### distancia  {.value-box}
+```{r}
+valueBox(value = paste(round(distance/1000,2),"Km"), #ud1$min, 
+         caption = "Distancia recorrida", 
+         icon = "fa-solod fa-person-walking-arrow-right", 
+         color = "#aa0000")
+```
+
+
+Column {data-width=500 .tabset}
+--------------------------------------------
+
+### <b style= 'color:#019ca1' > Boxplot por categoria</b>
+```{r}
+ggplot(subset_femenino, aes(x = categoria, y = timerun/60)) +
+  geom_boxplot(outlier.colour="red",color="blue",fill="#3366ff")+
+geom_point(aes(color='mediana tiempo',  x=categoria,y=median(timerun/60) ))
+```
+
+Row    {.tabset}
+--------------------------------------------
+
+### <b style= 'color:#019ca1' >Cat Juvenil</b>
+```{r}
+subset_femeninoJU=subset(subset_femenino,subset_femenino$categoria=="1. Juvenil")
+
+x=subset_femeninoJU$timerun/60
+paste("En la Categoria Juvenil Promedio:",round(mean(subset_femeninoJU$timerun/60),1),"Mediana:",round(median(subset_femeninoJU$timerun/60),1))
+
+
+hist(x,main="Histograma Categoria Juvenil" ,  xlab="tiempo(minutos)",ylab="frecuencia" ,col='#00557f')
+```
+
+### <b style= 'color:#019ca1' >Cat Abierta</b>
+```{r}
+subset_femeninoCA=subset(subset_femenino,subset_femenino$categoria=="2. Abierta")
+x=subset_femeninoCA$timerun/60
+paste("En la Categoria Abierta  Promedio:",round(mean(subset_femeninoCA$timerun/60),1),"Mediana:",round(median(subset_femeninoCA$timerun/60),1))
+
+
+hist(x,,main="Histograma Categoria Abierta" ,xlab="tiempo(minutos)",ylab="frecuencia" ,col='#00557f')
+```
+
+### <b style= 'color:#019ca1' >Cat Veteranos A</b>
+```{r}
+subset_femeninoVA=subset(subset_femenino,subset_femenino$categoria=="3. Veteranos A")
+x=subset_femeninoVA$timerun/60
+
+paste("En la Categoria Veteranos A Promedio:",round(mean(subset_femeninoVA$timerun/60),1),"Mediana:",round(median(subset_femeninoVA$timerun/60),1))
+
+hist(x,main="Histograma Categoria Veteranos A" ,xlab="tiempo(minutos)",ylab="frecuencia" ,col='#00557f')
+```
+
+### <b style= 'color:#019ca1' >Cat Veteranos B</b>
+```{r}
+subset_femeninoVB=subset(subset_femenino,subset_femenino$categoria=="4. Veteranos B")
+
+paste("En la Categoria Veteranos B Promedio:",round(mean(subset_femeninoVB$timerun/60),1),"Mediana:",round(median(subset_femeninoVB$timerun/60),1))
+
+x=subset_femeninoVB$timerun/60
+hist(x,main="Histograma Categoria Veteranos B",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#00557f')
+```
+
+### <b style= 'color:#019ca1' >Cat Veteranos C</b>
+```{r}
+subset_femeninoVC=subset(subset_femenino,subset_femenino$categoria=="5. Veteranos C")
+
+paste("En la Categoria Veteranos C Promedio:",round(mean(subset_femeninoVC$timerun/60),1),"Mediana:",round(median(subset_femeninoVC$timerun/60),1))
+x=subset_femeninoVC$timerun/60
+hist(x,main="Histograma Categoria Veteranos C",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#00557f')
+```
+
+
+
+
+# <b style= 'color:#ff0080' > Competencia Masculina</b>{data-navmenu="Tipo Competencia"}
+
+Column  { data-width=100 }
+--------------------------------------------
+
+### Ganador {.value-box}
+
+```{r}
+valueBox(  value=round(min(subset_masculino$timerun/60),1),caption='Ganador tiempo', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+### Tiempo promedio {.value-box}
+```{r}
+valueBox(  value=round(mean(subset_masculino$timerun/60),1),caption='Promedio tiempo', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+
+### Tiempo promedio {.value-box}
+```{r}
+valueBox(  value=length(subset_masculino$id),caption='Cantidad de Participantes', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+
+### Porcentaje de hombres {.value-box}
+```{r}
+valueBox(  value=paste(round((length(subset_masculino$id)/length(CarreraLuz22$id))*100,2),"%"),caption='%Hombres', icon="fa-solid fa-medal",col="#aa0000")
+
+```
+
+### velocidad  {.value-box}
+```{r}
+valueBox(value =paste(round(distance/min(subset_masculino$timerun),2),"m/s"), # ud1$cierre, 
+         caption = "Máxima velocidad", 
+         icon = "fa-clock", 
+         color = "#aa0000")
+```
+
+
+### distancia  {.value-box}
+```{r}
+valueBox(value = paste(round(distance/1000,2),"Km"), #ud1$min, 
+         caption = "Distancia recorrida", 
+         icon = "fa-solod fa-person-walking-arrow-right", 
+         color = "#aa0000")
+```
+
+
+
+Column  { data-width=500 }
+--------------------------------------------
+
+###  <b style= 'color:#ff0080' >Boxplot por    categoria</b> 
+```{r}
+
+ggplot(subset_masculino, aes(x = categoria, y = timerun/60)) +
+  geom_boxplot(outlier.colour="red",color="blue",fill="#ffcbdb")+
+  geom_point(aes(color='mediana tiempo',  x=categoria,y=median(timerun/60) ))
+```
+
+Row    {.tabset}
+--------------------------------------------
+
+###  <b style= 'color:#ff0080' >Cat Juvenil</b> 
+
+```{r}
+subset_masculinoJU=subset(subset_masculino,subset_masculino$categoria=="1. Juvenil")
+
+paste("En la Categoria Juvenil Promedio:",round(mean(subset_masculinoJU$timerun/60),1),"Mediana:",round(median(subset_masculinoJU$timerun/60),1))
+
+x=subset_masculinoJU$timerun/60
+hist(x,main="Histograma Categoria Juvenil",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#ffcbdb')
+```
+
+###  <b style= 'color:#ff0080' >Cat Abierta</b> 
+```{r}
+subset_masculinoCA=subset(subset_masculino,subset_masculino$categoria=="2. Abierta")
+paste("En la Categoria Abierta Promedio:",round(mean(subset_masculinoCA$timerun/60),1),"Mediana:",round(median(subset_masculinoCA$timerun/60),1))
+
+x=subset_masculinoCA$timerun/60
+hist(x,main="Histograma Categoria Abierta",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#ffcbdb')
+```
+
+###  <b style= 'color:#ff0080' >Cat Veteranos A</b> 
+```{r}
+subset_masculinoVA=subset(subset_masculino,subset_masculino$categoria=="3. Veteranos A")
+paste("En la Categoria Veteranoas A Promedio:",round(mean(subset_masculinoVA$timerun/60),1),"Mediana:",round(median(subset_masculinoVA$timerun/60),1))
+
+x=subset_masculinoVA$timerun/60
+hist(x,main="Histograma Categoria Veteranos A",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#ffcbdb')
+```
+
+###  <b style= 'color:#ff0080' >Cat Veteranos B</b> 
+```{r}
+subset_masculinoVB=subset(subset_masculino,subset_masculino$categoria=="4. Veteranos B")
+
+paste("En la Categoria Veteranos B Promedio:",round(mean(subset_masculinoVB$timerun/60),1),"Mediana:",round(median(subset_masculinoVB$timerun/60),1))
+
+
+X=subset_masculinoVB$timerun/60
+hist(x,main="Histograma Categoria Veteranos B",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#ffcbdb')
+```
+
+
+
+###  <b style= 'color:#ff0080' >Cat Veteranos C</b> 
+```{r}
+subset_masculinoVC=subset(subset_masculino,subset_masculino$categoria=="5. Veteranos C")
+paste("En la Categoria Veteranos C Promedio:",round(mean(subset_masculinoVC$timerun/60),1),"Mediana:",round(median(subset_masculinoVC$timerun/60),1))
+
+
+x=subset_masculinoVC$timerun/60
+hist(x,main="Histograma Categoria Veteranos C",xlab="tiempo(minutos)",ylab="frecuencia" ,col='#ffcbdb')
+```
+
