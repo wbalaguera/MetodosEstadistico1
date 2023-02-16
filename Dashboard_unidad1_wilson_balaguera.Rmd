@@ -86,13 +86,11 @@ Column {data-width=700 .tabset}
 --------------------------------------------
 
 ###  <b style= 'color:#aa0000' >La mejor Carrera 2022 </b>
-**Carrera Luz 2022** En esta carrera  con una distancia de 10km , se recibieron participantes desde los 15 año s en adelante , en ella participaron 
-```{r}
-paste("Atletas femeninos:",length(subset_femenino$timerun))
-paste("Atletas masculinos:",length(subset_masculino$timerun))
-
-
-```
+**Carrera Luz 2022** En esta carrera  con una
+distancia de 10km , se recibieron participantes 
+desde los 15 año s en adelante , en ella 
+participaron `r paste("Atletas femeninos:",length(subset_femenino$timerun))` y 
+`r paste("Atletas masculinos:",length(subset_masculino$timerun))`
 
 ```{r, echo=FALSE, out.width="30%", fig.align = "left"}
 knitr::include_graphics("carreragrande.png")
@@ -108,7 +106,7 @@ knitr::include_graphics("carreragrande.png")
 ggplot(bd, aes(x = edad, y = timerun/60,col=sex)) +
   geom_point()+
   labs(
-         y = "Tiempo", 
+         y = "Tiempo minutos", 
          x = "Edad atleta", 
          title = "Edad Vs Tiempo", 
          caption = "Fuente: midwest") +
@@ -118,7 +116,7 @@ ggplot(bd, aes(x = edad, y = timerun/60,col=sex)) +
 **Tiempo por categoria**
 ```{r}
 dat=aggregate(bd$timerun/60, list(sexo=bd$sex, categoria =bd$categoria), FUN=mean) 
-names (dat)[3]='Promedio Tiempo'
+names (dat)[3]='Promedio minutos'
 dat
 
 
@@ -127,31 +125,14 @@ dat
 
 ### <b style= 'color:#aa0000' >Categoria Vs Tiempo </b>
 
-Si bien la categoria de Jovenes es mas rapida , los veteranos de Categoria "c" en conjunto son mas rapidos
-
-
-
+**Desviacion Estandar por Categoria**
 ```{r}
-
-
-dat=aggregate(bd$timerun/60, list(categoria =bd$categoria), FUN=mean) 
-names (dat)[2]='Promedio Tiempo'
+dat=aggregate(bd$timerun/60, list(categoria =bd$categoria), FUN=sd) 
+names (dat)[2]='Desviacion estandar Tiempo'
 dat
-
-
-
 ```
- 
- ```{r}
- 
- 
- ```
- 
- 
- 
+
 ```{r}
-
-
 ggplot(bd, aes(x = categoria, y = timerun/60)) +
   geom_boxplot(outlier.colour="red",color="blue",fill="#485767")+
   geom_point(aes(color='mediana tiempo',  x=categoria,y=median(timerun/60) ))
@@ -161,20 +142,61 @@ ggplot(bd, aes(x = categoria, y = timerun/60)) +
          title = "Categoria Vs Tiempo"
          ) +
     theme_light()
+  
+  
 ```
 
 
-
-
-Column {data-width=400 }
+Column {data-width=400 .tabset}
 --------------------------------------------
+
+
+###  <b style= 'color:#aa0000'> Resumen</b>
+
+
+**Carrera Luz 2022**, 
+
+
+Una carrera donde el porcentaje dominante en participantes fue el sexo masculino con
+ `r paste(round((length(subset_masculino$timerun)/length(bd$timerun))*100,2),"%")`
+ de un total de atletas  `r paste(length(bd$id))`
+ La mayor participacion estuvo en la categoria Abierta con una participación de **61.3%**.
+ 
+ El  menor tiempo en Hombres es la Categoria Juvenil  con **59.76 minutos**
+ El  menor tiempo en Mujeres es la Categoria Abierto  con **70.19 minutos**
+ 
+ En general la caegoria mas rapida son los ,pero la categoria **Veteranos B**
+ tiene menor dispersion (11.87 min) , en conjunto esta categoria tiene mejores resultados.
+
+
+  
+  
+ 
+ 
+ 
+
 
 ### Participacion general en Categorias
 
+
+
+```{r}
+library("rstatix")
+library("tidyverse")
+bd %>% 
+group_by(categoria) %>% 
+summarise(n=n()) %>% 
+mutate(proporcion=n/sum(n))  
+
+```
+
+Boxplot
 ```{r}
 ggplot(bd, aes(x = categoria, fill=sex)) +  geom_bar(position ="dodge") 
 
 ```
+
+
 
 ### *Promedio de Edad
 
@@ -244,7 +266,7 @@ Column {data-width=500 .tabset}
 ### <b style= 'color:#019ca1' > Boxplot por categoria</b>
 ```{r}
 ggplot(subset_femenino, aes(x = categoria, y = timerun/60)) +
-  geom_boxplot(outlier.colour="red",color="blue",fill="#3366ff")+
+geom_boxplot(outlier.colour="red",color="blue",fill="#3366ff")+
 geom_point(aes(color='mediana tiempo',  x=categoria,y=median(timerun/60) ))
 ```
 
